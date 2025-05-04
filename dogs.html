@@ -1,0 +1,129 @@
+
+<html>
+<head>
+  <title>INST377 - Activities</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-slider@1.0.0/dist/simple-slider.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/simple-slider@1.0.0/dist/simple-slider.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1>INST377 - Activities</h1>
+    <nav>
+      <ul class="navbar">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="stocks.html">Stocks</a></li>
+        <li><a href="dogs.html">Dogs</a></li>
+      </ul>
+    </nav>
+    <div class="red-bar"></div>
+  </header>
+
+  <main>
+    <h2>Random Dog Image Carousel</h2>
+    <div id="dog-carousel" class="slider"></div>
+
+    <h2>Dog Breeds</h2>
+    <div id="breed-buttons" class="button-group"></div>
+
+    <div id="breed-info" style="display: none; margin-top: 30px;">
+      <h3 id="breed-name"></h3>
+      <p id="breed-description"></p>
+      <p><strong>Lifespan:</strong> <span id="breed-life"></span></p>
+    </div>
+  </main>
+
+  <div id="audio-controls">
+    <h2>In this web page there are options to Navigate using Audio!</h2>
+    <p>Ensure your Mic is enabled to be able to use this feature</p>
+    <ul>
+      <li>Navigate to a Different Page<br><em>Say: Navigate to &lt;page&gt;</em></li>
+      <li>Change the Page Color<br><em>Say: Change the color to &lt;color&gt;</em></li>
+      <li>Say Hello Back to you!<br><em>Say: Hello</em></li>
+      <li>Open a Dog Breed<br><em>Say: Load Dog Breed Labrador</em></li>
+    </ul>
+    <button onclick="toggleAudio(true)">Turn On Listening</button>
+    <button onclick="toggleAudio(false)">Turn Off Listening</button>
+  </div>
+
+  <script src="audio.js"></script>
+
+  <script>
+    let allBreeds = [];
+
+    async function loadDogImages() {
+      const res = await fetch('https://dog.ceo/api/breeds/image/random/10');
+      const data = await res.json();
+      const container = document.getElementById('dog-carousel');
+
+      container.innerHTML = '';
+      data.message.forEach(img => {
+        const imgTag = document.createElement('img');
+        imgTag.src = img;
+        imgTag.style.height = '200px';
+        imgTag.style.margin = '0 10px';
+        container.appendChild(imgTag);
+      });
+
+      simpleSlider(container, {
+        autoPlay: true,
+        interval: 3000,
+        pauseOnHover: true
+      });
+    }
+
+    async function loadDogBreeds() {
+      const res = await fetch("https://dogapi.dog/api/v2/breeds");
+      const data = await res.json();
+      allBreeds = data.data;
+
+      const buttonContainer = document.getElementById("breed-buttons");
+
+      allBreeds.forEach(breed => {
+        const btn = document.createElement("button");
+        btn.classList.add("custom-btn");
+        btn.textContent = breed.attributes.name;
+        btn.setAttribute("data-id", breed.id);
+        buttonContainer.appendChild(btn);
+
+        btn.addEventListener("click", () => {
+          showBreedInfo(breed);
+        });
+      });
+    }
+
+    function showBreedInfo(breed) {
+      document.getElementById("breed-name").textContent = breed.attributes.name;
+      document.getElementById("breed-description").textContent = breed.attributes.description;
+      document.getElementById("breed-life").textContent =
+        `${breed.attributes.min_life} - ${breed.attributes.max_life} years`;
+
+      document.getElementById("breed-info").style.display = "block";
+    }
+
+    if (annyang) {
+      const commands = {
+        'load dog breed *name': function(name) {
+            const match = allBreeds.find(b =>
+                b.attributes.name.toLowerCase().includes(name.toLowerCase()));
+
+          if (match) {
+            showBreedInfo(match);
+          } else {
+            alert("Breed not found: " + name);
+          }
+        }
+      };
+      annyang.addCommands(commands);
+      annyang.start();
+    }
+
+    loadDogImages();
+    loadDogBreeds();
+  </script>
+</body>
+</html>

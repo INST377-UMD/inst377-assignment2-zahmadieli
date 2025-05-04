@@ -1,0 +1,162 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background-color: lightpink;
+    text-align: center;
+  }
+  
+  /* Header */
+  header h1 {
+    margin: 0;
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 24px;
+    padding-left: 20px;
+  }
+  
+  nav {
+    background-color: red;
+  }
+  
+  .navbar {
+    list-style-type: none;
+    display: flex;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar li {
+    margin: 0;
+  }
+  
+  .navbar a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+  }
+  
+  .navbar a:hover {
+    background-color: lightcoral;
+    color: yellow;
+  }
+  
+  .red-bar {
+    height: 15px;
+    background-color: lightsalmon;
+  }
+  
+  /* Headings */
+  main h2 {
+    font-size: 22px;
+    margin-top: 30px;
+  }
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .custom-btn {
+    background: linear-gradient(135deg, lightgreen
+     0%, lightblue 100%);
+    border: none;
+    color: #333;
+    padding: 10px 18px;
+    font-size: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .custom-btn:hover {
+    transform: scale(1.05);
+    background: teal;
+  }
+  
+  /* Quote Box */
+  #quote-box {
+    background-color: white;
+    border: 2px solid black;
+    margin: 20px auto;
+    padding: 15px;
+    width: 60%;
+    font-style: italic;
+  }
+  
+  /* Audio Section */
+  #audio-controls {
+    background-color: green;
+    color: white;
+    padding: 20px;
+    width: 70%;
+    margin: 30px auto;
+    border-radius: 10px;
+  }
+  
+  #audio-controls h2 {
+    margin-top: 0;
+  }
+  
+  #audio-controls ul {
+    text-align: left;
+    margin: 20px auto;
+    padding: 0 20px;
+    max-width: 500px;
+  }
+  
+  #audio-controls button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  #audio-controls button:hover {
+    background-color: white;
+  }
+  .stock-inputs {
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .stock-inputs input,
+  .stock-inputs select {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid gray;
+  }
+  
+  .chart-container {
+    width: 90%;
+    max-width: 700px;
+    margin: 30px auto;
+  }
+  
+  #redditTable {
+    width: 90%;
+    max-width: 800px;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background-color: white;
+  }
+  
+  #redditTable th, #redditTable td {
+    border: 1px solid gray;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  

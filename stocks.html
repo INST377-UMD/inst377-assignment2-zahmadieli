@@ -1,0 +1,172 @@
+<html>
+<head>
+  
+  <title>INST377 - Stocks Page</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>INST377 - Activities</h1>
+    <nav>
+      <ul class="navbar">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="stocks.html">Stocks</a></li>
+        <li><a href="dogs.html">Dogs</a></li>
+      </ul>
+    </nav>
+    <div class="red-bar"></div>
+  </header>
+
+  <main>
+    <h2>Let's chart some stocks!</h2>
+    <div class="stock-inputs">
+      <input type="text" id="tickerInput" placeholder="Enter Ticker (e.g. AAPL)">
+      <select id="dayRange">
+        <option value="30">30 Days</option>
+        <option value="60">60 Days</option>
+        <option value="90">90 Days</option>
+      </select>
+      <button class="custom-btn" id="getStockBtn">Lookup</button>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="stockChart"></canvas>
+    </div>
+
+    <section id="reddit-section">
+      <h2>Top 5 Reddit Stocks (April 3, 2022)</h2>
+      <table id="redditTable">
+        <thead>
+          <tr>
+            <th>Ticker</th>
+            <th>Comment Count</th>
+            <th>Sentiment</th>
+            <th>Yahoo Link</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <div id="audio-controls">
+    <h2>Audio Commands</h2>
+    <p>Say: "Hello" - to get Hello alert<br>
+       Say: "Change the color to blue" - to change background color<br>
+       Say: "Navigate to dogs" - to go to dogs.html<br>
+       Say: "Lookup AAPL" - to search for a stock (30 days only)
+    </p>
+    <button onclick="toggleAudio(true)">Turn On Listening</button>
+    <button onclick="toggleAudio(false)">Turn Off Listening</button>
+  </div>
+
+  <script src="audio.js"></script>
+  <script>
+    let chart;
+
+    document.getElementById("getStockBtn").addEventListener("click", () => {
+      const ticker = document.getElementById("tickerInput").value.toUpperCase();
+      const range = document.getElementById("dayRange").value;
+      fetchStockData(ticker, range);
+    });
+
+    async function fetchStockData(ticker, range) {
+      const API_KEY = "OlBMlEx72wEEb_Twp0HGpdOE5XMPWP5P"; 
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - parseInt(range));
+
+      const formatDate = date => date.toISOString().split('T')[0];
+
+      const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${formatDate(startDate)}/${formatDate(endDate)}?adjusted=true&sort=asc&limit=120&apiKey=${API_KEY}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.results || data.results.length === 0) {
+          alert("No data found for this ticker.");
+          return;
+        }
+
+        const labels = data.results.map(item => {
+          const date = new Date(item.t);
+          return `${date.getMonth()+1}/${date.getDate()}`;
+        });
+
+        const prices = data.results.map(item => item.c);
+        drawChart(labels, prices, ticker);
+      } catch (err) {
+        alert("Error fetching stock data.");
+        console.error(err);
+      }
+    }
+
+    function drawChart(labels, prices, ticker) {
+      const ctx = document.getElementById("stockChart").getContext("2d");
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: `${ticker} Closing Prices`,
+            data: prices,
+            borderColor: 'blue',
+            backgroundColor: 'lightblue',
+            fill: false,
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: 'Date' } },
+            y: { title: { display: true, text: 'Price ($)' } }
+          }
+        }
+      });
+    }
+
+    async function loadRedditStocks() {
+      const res = await fetch("https://tradestie.com/api/v1/apps/reddit?date=2022-04-03");
+      const data = await res.json();
+      const top5 = data.slice(0, 5);
+      const tbody = document.querySelector("#redditTable tbody");
+      tbody.innerHTML = "";
+
+      top5.forEach(stock => {
+        const row = document.createElement("tr");
+        const link = document.createElement("a");
+        link.href = `https://finance.yahoo.com/quote/${stock.ticker}`;
+        link.textContent = stock.ticker;
+        link.target = "_blank";
+
+        row.innerHTML = `
+          <td></td>
+          <td>${stock.no_of_comments}</td>
+          <td>${stock.sentiment === "Bullish" ? "🐂" : "🐻"}</td>
+          <td><a href="https://finance.yahoo.com/quote/${stock.ticker}" target="_blank">Link</a></td>
+        `;
+        row.cells[0].appendChild(link);
+        tbody.appendChild(row);
+      });
+    }
+
+    loadRedditStocks();
+
+    if (annyang) {
+      const commands = {
+        'lookup *ticker': function(ticker) {
+          fetchStockData(ticker.toUpperCase(), 30);
+        }
+      };
+      annyang.addCommands(commands);
+      annyang.start();
+    }
+  </script>
+</body>
+</html>
