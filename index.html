@@ -1,0 +1,65 @@
+<html>
+<head>
+  <title>INST377 - Activities</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1>INST377 - Activities</h1>
+    <nav>
+      <ul class="navbar">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="stocks.html">Stocks</a></li>
+        <li><a href="dogs.html">Dogs</a></li>
+      </ul>
+    </nav>
+    <div class="red-bar"></div>
+  </header>
+
+  <main>
+    <h2>These are some different activities we can try!</h2>
+
+    
+    <div class="button-group">
+      <button class="custom-btn" onclick="location.href='stocks.html'">Stocks</button>
+      <button class="custom-btn" onclick="location.href='dogs.html'">Dogs</button>
+    </div>
+
+    
+    <div id="quote-box">
+      <h3>Quote of the Page Load</h3>
+      <p id="quote">Loading quote...</p>
+    </div>
+
+    
+    <div id="audio-controls">
+      <h2>In this web page there are options to Navigate using Audio!</h2>
+      <p>Ensure your Mic is enabled to be able to use this feature</p>
+      <ul>
+        <li>Navigate to a Different Page<br><em>Say: Navigate to &lt;page&gt;</em></li>
+        <li>Change the Page Color<br><em>Say: Change the color to &lt;color&gt;</em></li>
+        <li>Say Hello Back to you!<br><em>Say: Hello</em></li>
+      </ul>
+      <button onclick="toggleAudio(true)">Turn On Listening</button>
+      <button onclick="toggleAudio(false)">Turn Off Listening</button>
+    </div>
+  </main>
+
+  <script src="audio.js"></script>
+  <script>
+    fetch("https://zenquotes.io/api/random")
+      .then(res => res.json())
+      .then(data => {
+        const quote = data[0].q;
+        const author = data[0].a;
+        document.getElementById("quote").textContent = `"${quote}" — ${author}`;
+      })
+      .catch(err => {
+        document.getElementById("quote").textContent = "Failed to load quote.";
+      });
+  </script>
+  
+</body>
+</html>
